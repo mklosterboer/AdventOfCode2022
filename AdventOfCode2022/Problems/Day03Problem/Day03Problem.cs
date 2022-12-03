@@ -39,13 +39,13 @@ namespace AdventOfCode2022.Problems.Day03
 
             for (var i = 0; i < Rucksacks.Count; i += 3)
             {
-                var commonItem = Rucksacks
-                    .Take(new Range(i, i + 3))
-                    .Select(x => x.ToList().Distinct())
-                    .Aggregate((acc, list) => acc.Concat(list))
-                    .GroupBy(x => x)
-                    .Where(x => x.Count() > 2)
-                    .Select(x => x.Key)
+                var rucksackOne = Rucksacks[i].Distinct();
+                var rucksackTwo = Rucksacks[i + 1].Distinct();
+                var rucksackThree = Rucksacks[i + 2].Distinct();
+
+                var commonItem = rucksackOne
+                    .Intersect(rucksackTwo)
+                    .Intersect(rucksackThree)
                     .First();
 
                 totalPriorities += GetScore(commonItem);
