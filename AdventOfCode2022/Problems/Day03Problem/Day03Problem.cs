@@ -21,11 +21,11 @@ namespace AdventOfCode2022.Problems.Day03
             {
                 var size = rucksack.Length / 2;
 
-                var firstCompartment = rucksack[..size];
-                var secondCompartment = rucksack[size..];
+                var compartmentOne = rucksack[..size];
+                var compartmentTwo = rucksack[size..];
 
-                var commonItem = firstCompartment
-                    .Intersect(secondCompartment)
+                var commonItem = compartmentOne
+                    .Intersect(compartmentTwo)
                     .First();
 
                 totalPriorities += GetScore(commonItem);
@@ -40,9 +40,9 @@ namespace AdventOfCode2022.Problems.Day03
 
             for (var i = 0; i < Rucksacks.Count; i += 3)
             {
-                var rucksackOne = Rucksacks[i].Distinct();
-                var rucksackTwo = Rucksacks[i + 1].Distinct();
-                var rucksackThree = Rucksacks[i + 2].Distinct();
+                var rucksackOne = Rucksacks[i];
+                var rucksackTwo = Rucksacks[i + 1];
+                var rucksackThree = Rucksacks[i + 2];
 
                 var commonItem = rucksackOne
                     .Intersect(rucksackTwo)
