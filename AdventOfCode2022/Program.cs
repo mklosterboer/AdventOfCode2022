@@ -1,10 +1,10 @@
-﻿using AdventOfCode2022.Problems.Day02;
+﻿using AdventOfCode2022.Problems.Day03;
 using AdventOfCode2022.Utilities;
 using System.Diagnostics;
 
 var stopwatch = Stopwatch.StartNew();
 
-IProblem problem = new Day02Problem();
+IProblem problem = new Day03Problem();
 
 var runner = new Runner(problem);
 
