@@ -21,11 +21,12 @@ namespace AdventOfCode2022.Problems.Day03
             {
                 var size = rucksack.Length / 2;
 
-                var firstCompartment = rucksack[..size].ToList();
+                var firstCompartment = rucksack[..size];
+                var secondCompartment = rucksack[size..];
 
-                var secondCompartment = rucksack[size..].ToList();
-
-                var commonItem = firstCompartment.Intersect(secondCompartment).First();
+                var commonItem = firstCompartment
+                    .Intersect(secondCompartment)
+                    .First();
 
                 totalPriorities += GetScore(commonItem);
             }
