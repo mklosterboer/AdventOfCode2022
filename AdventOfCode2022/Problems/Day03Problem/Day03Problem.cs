@@ -1,6 +1,6 @@
 ﻿using AdventOfCode2022.Utilities;
 
-namespace AdventOfCode2022.Problems.Day03
+namespace AdventOfCode2022.Problems
 {
     internal class Day03Problem : Problem
     {

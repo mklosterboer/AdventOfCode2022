@@ -1,6 +1,7 @@
-﻿using AdventOfCode2022.Utilities;
+﻿using AdventOfCode2022.Problems.Day02;
+using AdventOfCode2022.Utilities;
 
-namespace AdventOfCode2022.Problems.Day02
+namespace AdventOfCode2022.Problems
 {
     public class Day02Problem : Problem
     {
