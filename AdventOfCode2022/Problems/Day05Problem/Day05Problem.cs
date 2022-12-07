@@ -1,71 +1,35 @@
-﻿using AdventOfCode2022.Utilities;
+﻿using AdventOfCode2022.Problems.Day05;
+using AdventOfCode2022.Utilities;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2022.Problems
 {
-    internal class Day05Problem : Problem
+    internal partial class Day05Problem : Problem
     {
         protected override string InputName => "Actual";
 
-        private List<Instruction> Instructions { get; init; }
+        private readonly List<string> InstructionRows = new();
+        private readonly List<string> StackRows = new();
 
-        // TODO: This should actually be parsed out of the file so I don't have to make duplicates
-        private readonly Dictionary<int, List<string>> TestStacksPartOne = new()
-        {
-            {1, new List<string> {"Z", "N"} },
-            {2, new List<string> {"M", "C", "D"} },
-            {3, new List<string> {"P"} },
-        };
-
-        private readonly Dictionary<int, List<string>> TestStacksPartTwo = new()
-        {
-            {1, new List<string> {"Z", "N"} },
-            {2, new List<string> {"M", "C", "D"} },
-            {3, new List<string> {"P"} },
-        };
-
-        // TODO: This should actually be parsed out of the file so I don't have to make duplicates
-        private readonly Dictionary<int, List<string>> ActualStacksPartOne = new()
-        {
-            {1, new List<string> {"H", "B", "V", "W", "N", "M", "L", "P"} },
-            {2, new List<string> {"M", "Q", "H"} },
-            {3, new List<string> {"N", "D", "B", "G", "F", "Q", "M", "L"} },
-            {4, new List<string> {"Z", "T", "F", "Q", "M", "W", "G"} },
-            {5, new List<string> {"M", "T", "H", "P"} },
-            {6, new List<string> {"C", "B", "M", "J", "D", "H", "G", "T"} },
-            {7, new List<string> {"M", "N", "B", "F", "V", "R"} },
-            {8, new List<string> {"P", "L", "H", "M", "R", "G", "S"} },
-            {9, new List<string> {"P", "D", "B", "C", "N"} },
-        };
-
-        private readonly Dictionary<int, List<string>> ActualStacksPartTwo = new()
-        {
-            {1, new List<string> {"H", "B", "V", "W", "N", "M", "L", "P"} },
-            {2, new List<string> {"M", "Q", "H"} },
-            {3, new List<string> {"N", "D", "B", "G", "F", "Q", "M", "L"} },
-            {4, new List<string> {"Z", "T", "F", "Q", "M", "W", "G"} },
-            {5, new List<string> {"M", "T", "H", "P"} },
-            {6, new List<string> {"C", "B", "M", "J", "D", "H", "G", "T"} },
-            {7, new List<string> {"M", "N", "B", "F", "V", "R"} },
-            {8, new List<string> {"P", "L", "H", "M", "R", "G", "S"} },
-            {9, new List<string> {"P", "D", "B", "C", "N"} },
-        };
+        private static readonly Regex CrateParser = new(@"(?<crate>[A-Z\[\]\s]{3})(\s|$)");
 
         public Day05Problem()
         {
-            Instructions = new List<Instruction>();
-
-            var rows = GetInputStringList();
+            var inputRows = GetInputStringList();
 
             var isPastStacks = false;
-            foreach (var row in rows)
+            foreach (var row in inputRows)
             {
                 if (isPastStacks)
                 {
-                    Instructions.Add(new Instruction(row));
+                    InstructionRows.Add(row);
+                }
+                else
+                {
+                    StackRows.Add(row);
                 }
 
-                if (string.IsNullOrEmpty(row))
+                if (string.IsNullOrWhiteSpace(row))
                 {
                     isPastStacks = true;
                 }
@@ -74,80 +38,87 @@ namespace AdventOfCode2022.Problems
 
         public override object PartOne()
         {
-            var Stacks = InputName == "Actual" ? ActualStacksPartOne : TestStacksPartOne;
-
-            foreach (var i in Instructions)
-            {
-                var sourceStack = Stacks[i.Start];
-                var destinationStack = Stacks[i.End];
-
-                // Find set to move and reverse it since the boxes will be picked up one at a time
-                var setToMove = sourceStack.TakeLast(i.NumberToMove).Reverse();
-
-                // Move to the new stack
-                Stacks[i.End] = destinationStack.Concat(setToMove).ToList();
-
-                // Remove from the old stack
-                Stacks[i.Start] = sourceStack.Take(sourceStack.Count - i.NumberToMove).ToList();
-            }
-
-            var result = string.Empty;
-
-            foreach (var value in Stacks.Values)
-            {
-                result += value.Last();
-            }
-
-            return result;
+            return Solve(InstructionRows, StackRows, CrateMover9000MoveStrategy);
         }
 
         public override object PartTwo()
         {
-            var Stacks = InputName == "Actual" ? ActualStacksPartTwo : TestStacksPartTwo;
+            return Solve(InstructionRows, StackRows, CrateMover9001MoveStrategy);
+        }
 
-            foreach (var i in Instructions)
+        private static string Solve(
+            IEnumerable<string> instructionRows,
+            IEnumerable<string> stackRows,
+            Func<IEnumerable<char>, int, IEnumerable<char>> moveStrategy)
+        {
+            var stacks = ParseStacks(stackRows);
+            var instructions = GetInstructions(instructionRows);
+
+            foreach (var i in instructions)
             {
-                var sourceStack = Stacks[i.Start];
-                var destinationStack = Stacks[i.End];
+                var sourceStack = stacks[i.Source];
+                var destinationStack = stacks[i.Destination];
 
-                // Find set to move. New crane picks up all boxes at once. 
-                var setToMove = sourceStack.TakeLast(i.NumberToMove);
+                // Find set to move. Move them according to the supplied strategy.
+                var setToMove = moveStrategy(sourceStack, i.NumberToMove);
 
                 // Move to the new stack
-                Stacks[i.End] = destinationStack.Concat(setToMove).ToList();
+                stacks[i.Destination] = destinationStack.Concat(setToMove).ToList();
 
                 // Remove from the old stack
-                Stacks[i.Start] = sourceStack.Take(sourceStack.Count - i.NumberToMove).ToList();
+                stacks[i.Source] = sourceStack.Take(sourceStack.Count() - i.NumberToMove).ToList();
             }
 
             var result = string.Empty;
 
-            foreach (var value in Stacks.Values)
+            foreach (var key in stacks.Keys.OrderBy(x => x))
             {
-                result += value.Last();
+                result += stacks[key].Last();
             }
 
             return result;
         }
 
-        private class Instruction
+        private static IEnumerable<char> CrateMover9000MoveStrategy(IEnumerable<char> stack, int numberToMove)
         {
-            public int NumberToMove { get; init; }
+            return stack.TakeLast(numberToMove).Reverse();
+        }
 
-            public int Start { get; init; }
+        private static IEnumerable<char> CrateMover9001MoveStrategy(IEnumerable<char> stack, int numberToMove)
+        {
+            return stack.TakeLast(numberToMove);
+        }
 
-            public int End { get; init; }
+        private static Dictionary<int, IEnumerable<char>> ParseStacks(IEnumerable<string> stackRows)
+        {
+            var stacks = new Dictionary<int, IEnumerable<char>>();
 
-            private static readonly Regex Parser = new(@"move (?<count>\d*) from (?<start>\d*) to (?<end>\d*)");
-
-            public Instruction(string instruction)
+            foreach (var row in stackRows)
             {
-                var groups = Parser.Match(instruction).Groups;
+                var matches = CrateParser.Matches(row);
 
-                NumberToMove = int.Parse(groups["count"].Value);
-                Start = int.Parse(groups["start"].Value);
-                End = int.Parse(groups["end"].Value);
+                var stackIndex = 1;
+                foreach (Match match in matches)
+                {
+                    var crateMatch = match.Groups["crate"];
+                    if (crateMatch != null && !string.IsNullOrWhiteSpace(crateMatch.Value))
+                    {
+                        // A valid match will be, for example, "[A]" and we need the 'A'
+                        var crateValue = crateMatch.Value.ElementAt(1);
+
+                        stacks.AddOrPrependAtKey(stackIndex, crateValue);
+                    }
+
+                    stackIndex++;
+                };
             }
+
+            return stacks;
+        }
+
+        private static IEnumerable<Instruction> GetInstructions(IEnumerable<string> instructionRows)
+        {
+            return instructionRows.Select(row => new Instruction(row)).ToList();
         }
     }
 }
