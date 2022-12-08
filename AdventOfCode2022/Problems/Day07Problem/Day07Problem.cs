@@ -1,5 +1,6 @@
 ﻿using AdventOfCode2022.Problems.Day07;
 using AdventOfCode2022.Utilities;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode2022.Problems
 {
@@ -41,6 +42,13 @@ namespace AdventOfCode2022.Problems
                 .First();
         }
 
+        private static readonly Regex ChangeToRootPattern = new(@"\$ cd \/");
+        private static readonly Regex ChangeToParentPattern = new(@"\$ cd \.\.");
+        private static readonly Regex ChangeToDirectoryPattern = new(@"\$ cd .*");
+        private static readonly Regex ListPattern = new(@"\$ ls");
+        private static readonly Regex DirectoryPattern = new(@"dir .*");
+        private static readonly Regex FilePattern = new(@"(\d*) (.*)");
+
         private static ElfDirectory GetRoot(List<string> lines)
         {
             var root = new ElfDirectory("/", null);
@@ -51,43 +59,26 @@ namespace AdventOfCode2022.Problems
             {
                 var line = lines[lineNumber];
 
-                if (line.StartsWith('$'))
+                switch (line)
                 {
-                    // This is a command
-                    if (line.StartsWith("$ cd"))
-                    {
-                        var path = line[5..];
-                        if (path == "/")
-                        {
-                            currentDirectory = root;
-                        }
-                        else if (path == "..")
-                        {
-                            currentDirectory = currentDirectory.Parent;
-                        }
-                        else
-                        {
-                            var newDirectoryName = line[5..];
-                            currentDirectory = currentDirectory.GetSubDirectory(newDirectoryName);
-                        }
-                    }
-                    else if (line == "$ ls")
-                    {
-                        // Don't really need this, but this is a no action for parsing the input.
-                    }
-                }
-                else
-                {
-                    // This is a listing of a file or directory
-                    if (line.StartsWith("dir"))
-                    {
-                        var newDirectoryName = line[4..];
-                        currentDirectory.AddDirectory(new ElfDirectory(newDirectoryName, currentDirectory));
-                    }
-                    else
-                    {
+                    case var x when ListPattern.IsMatch(x):
+                        break;
+                    case var x when ChangeToRootPattern.IsMatch(x):
+                        currentDirectory = root;
+                        break;
+                    case var x when ChangeToParentPattern.IsMatch(x):
+                        currentDirectory = currentDirectory.Parent;
+                        break;
+                    case var x when ChangeToDirectoryPattern.IsMatch(x):
+                        currentDirectory = currentDirectory.GetSubDirectory(line[5..]);
+                        break;
+                    case var x when DirectoryPattern.IsMatch(x):
+                        currentDirectory.AddDirectory(new ElfDirectory(line[4..], currentDirectory));
+                        break;
+                    case var x when FilePattern.IsMatch(x):
                         currentDirectory.AddFile(new ElfFile(line, currentDirectory));
-                    }
+                        break;
+                    default: break;
                 }
 
                 lineNumber++;
