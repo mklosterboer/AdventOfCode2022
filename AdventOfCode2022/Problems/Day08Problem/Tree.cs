@@ -24,7 +24,7 @@
                 return true;
             }
 
-            if (HighestLeft(Height) || HighestRight(Height) || HighestBottom(Height) || HighestTop(Height))
+            if (SeenFromLeft(Height) || SeenFromRight(Height) || SeenFromBottom(Height) || SeenFromTop(Height))
             {
                 return true;
             }
@@ -32,7 +32,7 @@
             return false;
         }
 
-        public bool HighestLeft(int height)
+        public bool SeenFromLeft(int height)
         {
             if (Left == null)
             {
@@ -41,13 +41,13 @@
 
             if (height > Left.Height)
             {
-                return Left.HighestLeft(height);
+                return Left.SeenFromLeft(height);
             }
 
             return false;
         }
 
-        public bool HighestRight(int height)
+        public bool SeenFromRight(int height)
         {
             if (Right == null)
             {
@@ -56,13 +56,13 @@
 
             if (height > Right.Height)
             {
-                return Right.HighestRight(height);
+                return Right.SeenFromRight(height);
             }
 
             return false;
         }
 
-        public bool HighestTop(int height)
+        public bool SeenFromTop(int height)
         {
             if (Top == null)
             {
@@ -71,13 +71,13 @@
 
             if (height > Top.Height)
             {
-                return Top.HighestTop(height);
+                return Top.SeenFromTop(height);
             }
 
             return false;
         }
 
-        public bool HighestBottom(int height)
+        public bool SeenFromBottom(int height)
         {
             if (Bottom == null)
             {
@@ -86,7 +86,7 @@
 
             if (height > Bottom.Height)
             {
-                return Bottom.HighestBottom(height);
+                return Bottom.SeenFromBottom(height);
             }
 
             return false;
