@@ -1,6 +1,5 @@
 ﻿using AdventOfCode2022.Problems.Day07;
 using AdventOfCode2022.Utilities;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode2022.Problems
 {
@@ -42,43 +41,36 @@ namespace AdventOfCode2022.Problems
                 .First();
         }
 
-        private static readonly Regex ChangeToRootPattern = new(@"\$ cd \/");
-        private static readonly Regex ChangeToParentPattern = new(@"\$ cd \.\.");
-        private static readonly Regex ChangeToDirectoryPattern = new(@"\$ cd .*");
-        private static readonly Regex ListPattern = new(@"\$ ls");
-        private static readonly Regex DirectoryPattern = new(@"dir .*");
-        private static readonly Regex FilePattern = new(@"(\d*) (.*)");
-
         private static ElfDirectory GetRoot(List<string> lines)
         {
             var root = new ElfDirectory("/", null);
 
             var currentDirectory = root;
             var lineNumber = 0;
+
             do
             {
                 var line = lines[lineNumber];
 
-                switch (line)
+                switch (line.Split(" "))
                 {
-                    case var x when ListPattern.IsMatch(x):
+                    case ["$", "ls"]:
                         break;
-                    case var x when ChangeToRootPattern.IsMatch(x):
+                    case ["$", "cd", "/"]:
                         currentDirectory = root;
                         break;
-                    case var x when ChangeToParentPattern.IsMatch(x):
+                    case ["$", "cd", ".."]:
                         currentDirectory = currentDirectory.Parent;
                         break;
-                    case var x when ChangeToDirectoryPattern.IsMatch(x):
-                        currentDirectory = currentDirectory.GetSubDirectory(line[5..]);
+                    case ["$", "cd", var name]:
+                        currentDirectory = currentDirectory.GetSubDirectory(name);
                         break;
-                    case var x when DirectoryPattern.IsMatch(x):
-                        currentDirectory.AddDirectory(new ElfDirectory(line[4..], currentDirectory));
+                    case ["dir", var name]:
+                        currentDirectory.AddDirectory(new ElfDirectory(name, currentDirectory));
                         break;
-                    case var x when FilePattern.IsMatch(x):
+                    case [_, _]:
                         currentDirectory.AddFile(new ElfFile(line, currentDirectory));
                         break;
-                    default: break;
                 }
 
                 lineNumber++;

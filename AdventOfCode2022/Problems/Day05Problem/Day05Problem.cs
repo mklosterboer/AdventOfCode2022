@@ -52,7 +52,7 @@ namespace AdventOfCode2022.Problems
             Func<IEnumerable<char>, int, IEnumerable<char>> moveStrategy)
         {
             var stacks = ParseStacks(stackRows);
-            var instructions = GetInstructions(instructionRows);
+            var instructions = ParseInstructions(instructionRows);
 
             foreach (var i in instructions)
             {
@@ -116,7 +116,7 @@ namespace AdventOfCode2022.Problems
             return stacks;
         }
 
-        private static IEnumerable<Instruction> GetInstructions(IEnumerable<string> instructionRows)
+        private static IEnumerable<Instruction> ParseInstructions(IEnumerable<string> instructionRows)
         {
             return instructionRows.Select(row => new Instruction(row)).ToList();
         }
