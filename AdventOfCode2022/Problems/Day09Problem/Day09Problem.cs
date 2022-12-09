@@ -1,6 +1,6 @@
-﻿using AdventOfCode2022.DataStructures;
-using AdventOfCode2022.Problems.Day09;
+﻿using AdventOfCode2022.Problems.Day09;
 using AdventOfCode2022.Utilities;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2022.Problems
@@ -20,8 +20,8 @@ namespace AdventOfCode2022.Problems
 
         public override object PartOne()
         {
-            var head = new Knot(new Vector2(0, 0));
-            var tail = new Knot(new Vector2(0, 0));
+            var head = new Knot(Vector2.Zero);
+            var tail = new Knot(Vector2.Zero);
 
             foreach (var row in Input)
             {
@@ -39,16 +39,16 @@ namespace AdventOfCode2022.Problems
 
         public override object PartTwo()
         {
-            var head = new Knot(new Vector2(0, 0));
-            var knot1 = new Knot(new Vector2(0, 0));
-            var knot2 = new Knot(new Vector2(0, 0));
-            var knot3 = new Knot(new Vector2(0, 0));
-            var knot4 = new Knot(new Vector2(0, 0));
-            var knot5 = new Knot(new Vector2(0, 0));
-            var knot6 = new Knot(new Vector2(0, 0));
-            var knot7 = new Knot(new Vector2(0, 0));
-            var knot8 = new Knot(new Vector2(0, 0));
-            var tail = new Knot(new Vector2(0, 0));
+            var head = new Knot(Vector2.Zero);
+            var knot1 = new Knot(Vector2.Zero);
+            var knot2 = new Knot(Vector2.Zero);
+            var knot3 = new Knot(Vector2.Zero);
+            var knot4 = new Knot(Vector2.Zero);
+            var knot5 = new Knot(Vector2.Zero);
+            var knot6 = new Knot(Vector2.Zero);
+            var knot7 = new Knot(Vector2.Zero);
+            var knot8 = new Knot(Vector2.Zero);
+            var tail = new Knot(Vector2.Zero);
 
             foreach (var row in Input)
             {

@@ -1,4 +1,4 @@
-﻿using AdventOfCode2022.DataStructures;
+﻿using System.Numerics;
 
 namespace AdventOfCode2022.Problems.Day09
 {
@@ -65,10 +65,10 @@ namespace AdventOfCode2022.Problems.Day09
 
             var distance = headLocation - Location;
 
-            if (headLocation.Y == Location.Y && Math.Abs(headLocation.X - Location.X) > 1)
+            if (headLocation.Y == Location.Y && Math.Abs(distance.X) > 1)
             {
                 // Same vertical axis, but not touching, move towards head on the horizontal axis
-                if (headLocation.X - Location.X > 0)
+                if (distance.X > 0)
                 {
                     StepRight();
                 }
@@ -77,10 +77,10 @@ namespace AdventOfCode2022.Problems.Day09
                     StepLeft();
                 }
             }
-            else if (headLocation.X == Location.X && Math.Abs(headLocation.Y - Location.Y) > 1)
+            else if (headLocation.X == Location.X && Math.Abs(distance.Y) > 1)
             {
                 // Same horizontal axis, but not touching, move towards head on the verical axis
-                if (headLocation.Y - Location.Y > 0)
+                if (distance.Y > 0)
                 {
                     StepUp();
                 }
