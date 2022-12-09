@@ -2,7 +2,7 @@
 
 namespace AdventOfCode2022.Problems.Day05
 {
-    public class Instruction
+    internal class Instruction
     {
         public int NumberToMove { get; init; }
 
