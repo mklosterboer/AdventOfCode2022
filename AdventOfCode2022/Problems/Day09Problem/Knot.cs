@@ -55,7 +55,7 @@ namespace AdventOfCode2022.Problems.Day09
             Location += new Vector2(0, -1);
         }
 
-        public void FollowHead(Vector2 headLocation)
+        public void Follow(Vector2 headLocation)
         {
             if (headLocation == Location)
             {

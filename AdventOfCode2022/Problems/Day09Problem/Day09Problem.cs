@@ -1,7 +1,5 @@
 ﻿using AdventOfCode2022.Problems.Day09;
 using AdventOfCode2022.Utilities;
-using System.Numerics;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode2022.Problems
 {
@@ -11,8 +9,6 @@ namespace AdventOfCode2022.Problems
 
         private IEnumerable<string> Input { get; init; }
 
-        private static readonly Regex MovePattern = new(@"(?<direction>[A-Z]) (?<steps>\d*)");
-
         public Day09Problem()
         {
             Input = GetInputStringList();
@@ -20,63 +16,25 @@ namespace AdventOfCode2022.Problems
 
         public override object PartOne()
         {
-            var head = new Knot(Vector2.Zero);
-            var tail = new Knot(Vector2.Zero);
-
-            foreach (var row in Input)
-            {
-                var (direction, steps) = ParseInstruction(row);
-
-                for (var s = 0; s < steps; s++)
-                {
-                    head.Step(direction);
-                    tail.FollowHead(head.Location);
-                }
-            }
-
-            return tail.Visited.Count;
+            return Solve(2);
         }
 
         public override object PartTwo()
         {
-            var head = new Knot(Vector2.Zero);
-            var knot1 = new Knot(Vector2.Zero);
-            var knot2 = new Knot(Vector2.Zero);
-            var knot3 = new Knot(Vector2.Zero);
-            var knot4 = new Knot(Vector2.Zero);
-            var knot5 = new Knot(Vector2.Zero);
-            var knot6 = new Knot(Vector2.Zero);
-            var knot7 = new Knot(Vector2.Zero);
-            var knot8 = new Knot(Vector2.Zero);
-            var tail = new Knot(Vector2.Zero);
+            return Solve(10);
+        }
+
+        private int Solve(int numKnots)
+        {
+            var rope = new Rope(numKnots);
 
             foreach (var row in Input)
             {
-                var (direction, steps) = ParseInstruction(row);
-
-                for (var s = 0; s < steps; s++)
-                {
-                    head.Step(direction);
-                    knot1.FollowHead(head.Location);
-                    knot2.FollowHead(knot1.Location);
-                    knot3.FollowHead(knot2.Location);
-                    knot4.FollowHead(knot3.Location);
-                    knot5.FollowHead(knot4.Location);
-                    knot6.FollowHead(knot5.Location);
-                    knot7.FollowHead(knot6.Location);
-                    knot8.FollowHead(knot7.Location);
-                    tail.FollowHead(knot8.Location);
-                }
+                var instruction = new Instruction(row);
+                rope.Move(instruction);
             }
 
-            return tail.Visited.Count;
-        }
-
-        private static (string direction, int steps) ParseInstruction(string row)
-        {
-            var matchGroups = MovePattern.Match(row).Groups;
-
-            return (matchGroups["direction"].Value, int.Parse(matchGroups["steps"].Value));
+            return rope.Tail.Visited.Count;
         }
     }
 }
