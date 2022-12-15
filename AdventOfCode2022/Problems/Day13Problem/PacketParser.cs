@@ -6,11 +6,6 @@ namespace AdventOfCode2022.Problems.Day13
     {
         public static ListPacketValue Parse(string input)
         {
-            if (string.IsNullOrEmpty(input))
-            {
-                return new ListPacketValue(new List<IPacketValue>());
-            }
-
             var element = (JsonElement)JsonSerializer.Deserialize<object>(input);
 
             return (ListPacketValue)FromJsonElement(element);
@@ -20,7 +15,7 @@ namespace AdventOfCode2022.Problems.Day13
             element.ValueKind switch
             {
                 JsonValueKind.Number => new IntegerPacketValue(element.GetInt32()),
-                JsonValueKind.Array => new ListPacketValue(element.EnumerateArray().Select(FromJsonElement).ToList()),
+                JsonValueKind.Array => new ListPacketValue(element.EnumerateArray().Select(FromJsonElement).ToArray()),
                 _ => throw new NotImplementedException()
             };
 

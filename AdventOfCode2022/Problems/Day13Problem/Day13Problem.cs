@@ -54,18 +54,18 @@ namespace AdventOfCode2022.Problems
             }
 
             var firstDividerPacket = new ListPacketValue(
-                new List<IPacketValue>() {
+                new IPacketValue[] {
                     new ListPacketValue(
-                        new List<IPacketValue>() {
+                        new IPacketValue[] {
                             new IntegerPacketValue(2)
                         })
                 });
             packets.Add(firstDividerPacket);
 
             var secondDividerPacket = new ListPacketValue(
-                new List<IPacketValue>() {
+                new IPacketValue[] {
                     new ListPacketValue(
-                        new List<IPacketValue>() {
+                        new IPacketValue[] {
                             new IntegerPacketValue(6)
                         })
                 });

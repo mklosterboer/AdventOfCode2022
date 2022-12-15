@@ -10,7 +10,6 @@
             }
 
             return ComparePackets(left, right);
-            throw new NotImplementedException();
         }
 
         private static int ComparePackets(IPacketValue left, IPacketValue right)
@@ -23,13 +22,13 @@
             var leftList = EnsureValueIsList(left);
             var rightList = EnsureValueIsList(right);
 
-            if (leftList.PacketValues.Count == 0 && rightList.PacketValues.Count == 0)
+            if (leftList.PacketValues.Length == 0 && rightList.PacketValues.Length == 0)
             {
                 // If both are empty, there is no comparison necessary
                 return 0;
             }
 
-            var shortestList = Math.Min(leftList.PacketValues.Count, rightList.PacketValues.Count);
+            var shortestList = Math.Min(leftList.PacketValues.Length, rightList.PacketValues.Length);
 
             // Compare the two lists
             for (var i = 0; i < shortestList; i++)
@@ -45,17 +44,14 @@
             }
 
             // They are equal, so check the list length instead.
-            return Math.Sign(leftList.PacketValues.Count - rightList.PacketValues.Count);
-
-            // Shouldn't reach here.
-            throw new NotImplementedException();
+            return Math.Sign(leftList.PacketValues.Length - rightList.PacketValues.Length);
         }
 
         private static ListPacketValue EnsureValueIsList(IPacketValue value) =>
             value switch
             {
                 ListPacketValue listPacket => listPacket,
-                IntegerPacketValue integerPacket => new ListPacketValue(new List<IPacketValue>() { integerPacket }),
+                IntegerPacketValue integerPacket => new ListPacketValue(new IPacketValue[] { integerPacket }),
                 _ => throw new NotImplementedException()
             };
     }
